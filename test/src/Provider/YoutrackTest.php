@@ -2,8 +2,8 @@
 
 namespace MarkusG\OAuth2\Client\Test\Provider;
 
-use Markusg\OAuth2\Client\Provider\Youtrack;
-use Markusg\OAuth2\Client\Provider\YoutrackUser;
+use MarkusG\OAuth2\Client\Provider\Youtrack;
+use MarkusG\OAuth2\Client\Provider\YoutrackUser;
 use Mockery as m;
 
 class YoutrackTest extends \PHPUnit_Framework_TestCase
