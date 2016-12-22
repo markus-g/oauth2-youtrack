@@ -19,7 +19,7 @@
     "jetbrains"
   ],
   "require": {
-    "php": ">=5.4.0",
+    "php": ">=5.5.0",
     "league/oauth2-client": "^1.4.2"
   },
   "require-dev": {
