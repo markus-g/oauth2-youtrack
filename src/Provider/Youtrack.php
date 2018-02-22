@@ -8,6 +8,7 @@ use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
+use UnexpectedValueException;
 
 /**
  * Class Youtrack
@@ -132,7 +133,7 @@ class Youtrack extends AbstractProvider
         ];
         $params = $grant->prepareRequestParameters($params, $options);
         $request = $this->getAccessTokenRequest($params);
-        $response = $this->getResponse($request);
+        $response = $this->getParsedResponse($request);
         $prepared = $this->prepareAccessTokenResponse($response);
         $token = $this->createAccessToken($prepared, $grant);
 
@@ -232,7 +233,7 @@ class Youtrack extends AbstractProvider
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {
-        return new YoutrackUser($response, self::ACCESS_TOKEN_RESOURCE_OWNER_ID);
+        return new YoutrackUser($response, $token);
     }
 
     /**
@@ -248,7 +249,14 @@ class Youtrack extends AbstractProvider
         $options = ['body' => \GuzzleHttp\Psr7\build_query(['scope' => $this->scopes])];
         $request = $this->getAuthenticatedRequest(self::METHOD_GET, $url, $token, $options);
 
-        return $this->getResponse($request);
+        $response = $this->getParsedResponse($request);
+        if (false === is_array($response)) {
+            throw new UnexpectedValueException(
+                'Invalid response received from Authorization Server. Expected JSON.'
+            );
+        }
+
+        return $response;
     }
 
     /**

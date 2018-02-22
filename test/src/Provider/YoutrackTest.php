@@ -5,8 +5,9 @@ namespace MarkusG\OAuth2\Client\Test\Provider;
 use MarkusG\OAuth2\Client\Provider\Youtrack;
 use MarkusG\OAuth2\Client\Provider\YoutrackUser;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class YoutrackTest extends \PHPUnit_Framework_TestCase
+class YoutrackTest extends TestCase
 {
     protected $provider;
 
@@ -41,10 +42,11 @@ class YoutrackTest extends \PHPUnit_Framework_TestCase
 
     public function testScopes()
     {
-        $options = ['scope' => [uniqid(),uniqid()]];
+        $options = ['scope' => [uniqid(), uniqid()]];
         $url = $this->provider->getAuthorizationUrl($options);
-        $this->assertContains(urlencode(implode(' ', $options['scope'])), $url);
+        $this->assertContains(rawurlencode(implode(' ', $options['scope'])), $url);
     }
+
     public function testGetAuthorizationUrl()
     {
         $url = $this->provider->getAuthorizationUrl();
@@ -59,6 +61,7 @@ class YoutrackTest extends \PHPUnit_Framework_TestCase
         $uri = parse_url($url);
         $this->assertEquals('/hub/api/rest/oauth2/token', $uri['path']);
     }
+
     public function testGetAccessToken()
     {
         $response = m::mock('Psr\Http\Message\ResponseInterface');
@@ -77,7 +80,7 @@ class YoutrackTest extends \PHPUnit_Framework_TestCase
 
     public function testUserData()
     {
-        $userId = rand(1000,9999);
+        $userId = rand(1000, 9999);
         $name = uniqid();
         $login = uniqid();
         $type = uniqid();
@@ -86,7 +89,7 @@ class YoutrackTest extends \PHPUnit_Framework_TestCase
         $postResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'application/x-www-form-urlencoded']);
         $postResponse->shouldReceive('getStatusCode')->andReturn(200);
         $userResponse = m::mock('Psr\Http\Message\ResponseInterface');
-        $userResponse->shouldReceive('getBody')->andReturn('{"id": '.$userId.', "login": "'.$login.'", "name": "'.$name.'", "type": "'.$type.'"}');
+        $userResponse->shouldReceive('getBody')->andReturn('{"id": ' . $userId . ', "login": "' . $login . '", "name": "' . $name . '", "type": "' . $type . '"}');
         $userResponse->shouldReceive('getHeader')->andReturn(['content-type' => 'json']);
         $userResponse->shouldReceive('getStatusCode')->andReturn(200);
         $client = m::mock('GuzzleHttp\ClientInterface');
@@ -106,7 +109,6 @@ class YoutrackTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($type, $user->getType());
         $this->assertEquals($type, $user->toArray()['type']);
     }
-
 
 
 }

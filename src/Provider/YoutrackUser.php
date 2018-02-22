@@ -4,6 +4,7 @@ namespace MarkusG\OAuth2\Client\Provider;
 
 use DateTime;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
+use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\ArrayAccessorTrait;
 
 /**
@@ -17,14 +18,20 @@ class YoutrackUser implements ResourceOwnerInterface
      * @var array
      */
     protected $response;
+    /**
+     * @var AccessToken
+     */
+    protected $token;
 
     /**
      * YoutrackUser constructor.
      * @param array $response
+     * @param AccessToken $token
      */
-    public function __construct(array $response)
+    public function __construct(array $response, AccessToken $token)
     {
         $this->response = $response;
+        $this->token = $token;
     }
 
     /**
@@ -139,6 +146,14 @@ class YoutrackUser implements ResourceOwnerInterface
     public function getId()
     {
         return $this->response['id'];
+    }
+
+    /**
+     * @return AccessToken
+     */
+    public function getToken(): AccessToken
+    {
+        return $this->token;
     }
 
     /**
